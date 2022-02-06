@@ -1,9 +1,14 @@
 /*
 	forma de invocación de método call:
 	def ejecucion = load 'script.groovy'
-	ejecucion.call()
+	ejecucion.casll()
 */
-def call(){
+def call(stages){
+    def stagesList = stages.split(";")
+    stagesList.each{
+        println("Stages enviadas ====> ${it}")
+    }
+
     stage("Paso 1: Build && Test"){
         sh "gradle clean build"
     }
