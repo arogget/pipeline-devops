@@ -19,7 +19,7 @@ def call(){
                     switch(params.compileTool)
                         {
                             case 'Maven':
-                                maven.call(()
+                                maven.call(();
                                 
                             break;
                             case 'Gradle':
