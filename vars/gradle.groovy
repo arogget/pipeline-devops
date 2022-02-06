@@ -14,21 +14,22 @@ def call(stages){
         'run_jar': 'stageRunJar',
         'curl_jar': 'stageCurlJar'
     ]
+    
+    def listStages = stages.split(";")
 ​
     if (stages.isEmpty()) {
         echo 'El pipeline se ejecutará completo'
         allStages()
     } else {
         echo 'Stages a ejecutar :' + stages
-        listStagesOrder.each { stageName, stageFunction ->
-            stages.each{ stageToExecute ->//variable as param
+       listStagesOrder.each { stageName, stageFunction ->
+            listStages.each{ stageToExecute ->
                 if(stageName.equals(stageToExecute)){
-                echo 'Ejecutando ' + stageFunction
-                "${stageFunction}"()
-                }
-            }
-        }
-​
+                println( 'Ejecutando ' + stageFunction)
+                  "${stageFunction}"()
+                 }
+                            }
+                            }
     }
 ​
 }
@@ -46,7 +47,7 @@ def stageSonar(){
     env.DESCRTIPTION_STAGE = "Paso 2: Sonar - Análisis Estático"
     stage("${env.DESCRTIPTION_STAGE}"){
         env.STAGE = "sonar - ${DESCRTIPTION_STAGE}"
-        withSonarQubeEnv('sonarqube') {
+        withSonarQubeEnv('sonarqube3') {
             sh "echo  ${env.STAGE}"
             sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=ejemplo-gradle -Dsonar.java.binaries=build'
         }
@@ -67,7 +68,7 @@ def stageRunSpringCurl(){
 def stageUploadNexus(){
     env.DESCRTIPTION_STAGE = "Paso 4: Subir Nexus"
     stage("${env.DESCRTIPTION_STAGE}"){
-        nexusPublisher nexusInstanceId: 'nexus',
+        nexusPublisher nexusInstanceId: 'nexus3',
         nexusRepositoryId: 'devops-usach-nexus',
         packages: [
             [$class: 'MavenPackage',
@@ -95,7 +96,7 @@ def stageDownloadNexus(){
    stage("${env.DESCRTIPTION_STAGE}"){
         env.STAGE = "download_nexus - ${DESCRTIPTION_STAGE}"
         sh "echo  ${env.STAGE}"
-        sh ' curl -X GET -u $NEXUS_USER:$NEXUS_PASSWORD "http://nexus:8081/repository/devops-usach-nexus/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
+        sh ' curl -X GET -u $NEXUS_USER:$NEXUS_PASSWORD "http://nexus3:8081/repository/devops-usach-nexus/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
     }
 }
 ​
